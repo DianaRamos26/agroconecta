@@ -16,6 +16,15 @@ O **AgroConecta** é uma aplicação web focada em aproximar e conectar soluçõ
    ```bash
    npx serve .
    ```
-3. Abra o navegador no endereço indicado >> https://agroconecta-sand.vercel.app/
+3. Abra o navegador no endereço indicado 👉  http://localhost:3000
+
 ---
+
+## 🔗 Link do Projeto no Ar
+
+O projeto foi publicado e pode ser acessado publicamente através do link:
+👉  https://agroconecta-sand.vercel.app/
+
+---
+
 *Desenvolvido por Diana Ramos.*
