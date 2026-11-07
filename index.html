@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgroConecta — Plataforma Integrada CitizenTech</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Fonte Plus Jakarta Sans e Phosphor/Lucide Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            agro: {
+              50: '#e7fff1',
+              100: '#c4e1d1',
+              200: '#86efac',
+              500: '#10b981',
+              700: '#1b4332',
+              800: '#133526',
+              900: '#081c15',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f2faf5; }
+    .tab-btn.active {
+      background-color: #1b4332;
+      color: #ffffff;
+    }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen flex flex-col">
+
+  <!-- BARRA DE STATUS / DEMONSTRAÇÃO BANCA -->
+  <header class="bg-agro-900 text-white text-xs px-4 py-2 flex flex-wrap justify-between items-center border-b border-agro-700">
+    <div class="flex items-center gap-2">
+      <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span class="font-semibold text-emerald-300">Supabase Realtime Conectado</span>
+      <span class="text-slate-400">| Polo Sul Fluminense (Terra Viva)</span>
+    </div>
+    <div class="flex items-center gap-4 text-slate-300">
+      <span>Global Solution FIAP — CitizenTech 2026</span>
+      <span class="bg-emerald-800/60 px-2 py-0.5 rounded text-emerald-200">ODS 2, 8 e 12</span>
+    </div>
+  </header>
+
+  <!-- NAVEGAÇÃO PRINCIPAL / SELETOR DE MÓDULOS -->
+  <nav class="bg-white shadow-sm border-b border-slate-200 px-6 py-3 flex flex-wrap items-center justify-between gap-4 sticky top-0 z-40">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-agro-700 text-white flex items-center justify-center font-bold text-xl shadow-sm">
+        🌱
+      </div>
+      <div>
+        <h1 class="text-lg font-extrabold text-agro-900 leading-none">AgroConecta</h1>
+        <p class="text-xs text-slate-500 font-medium">Tecnologia Cidadã para a Agricultura Familiar</p>
+      </div>
+    </div>
+
+    <!-- ABAS DO SISTEMA (WEB E SIMULADOR MOBILE) -->
+    <div class="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-xl text-sm font-medium text-slate-600">
+      <button onclick="switchTab('estoque')" id="tab-estoque" class="tab-btn active px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+        <i class="ph-bold ph-chart-bar"></i> Estoque & Colheitas
+      </button>
+      <button onclick="switchTab('agronomia')" id="tab-agronomia" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+        <i class="ph-bold ph-shield-check"></i> Triagem & Pragas
+      </button>
+      <button onclick="switchTab('logistica')" id="tab-logistica" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+        <i class="ph-bold ph-truck"></i> Frete Solidário
+      </button>
+      <button onclick="switchTab('compradores')" id="tab-compradores" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5">
+        <i class="ph-bold ph-storefront"></i> Conexão Urbana
+      </button>
+      <button onclick="switchTab('mobile-sim')" id="tab-mobile-sim" class="tab-btn px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-emerald-700 bg-emerald-100 hover:bg-emerald-200">
+        <i class="ph-bold ph-device-mobile"></i> App do Produtor (Mobile)
+      </button>
+    </div>
+
+    <!-- PERFIL / DEMO -->
+    <div class="flex items-center gap-3 text-sm">
+      <div class="text-right hidden sm:block">
+        <div class="font-bold text-slate-800">Dr. Carlos Mendes</div>
+        <div class="text-xs text-slate-500">Agrônomo Residente (EMATER)</div>
+      </div>
+      <div class="w-9 h-9 rounded-full bg-agro-100 border border-agro-500 flex items-center justify-center font-bold text-agro-800">
+        CM
+      </div>
+    </div>
+  </nav>
+
+  <!-- CONTEÚDO PRINCIPAL -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6">
+
+    <!-- SEÇÃO 1: PAINEL DE ESTOQUE E COLHEITAS -->
+    <section id="view-estoque" class="space-y-6">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Painel Central Cooperativa</span>
+          <h2 class="text-2xl sm:text-3xl font-extrabold text-agro-900 mt-1">Estoque Regional & Ofertas de Safra</h2>
+          <p class="text-sm text-slate-600">Consolidação automática dos apontamentos de colheita enviados via aplicativo móvel offline-first.</p>
+        </div>
+        <div class="flex gap-2">
+          <button class="bg-white border border-slate-300 text-slate-700 px-4 py-2 rounded-xl text-sm font-semibold hover:bg-slate-50 flex items-center gap-2">
+            <i class="ph ph-file-pdf"></i> Exportar Romaneio
+          </button>
+          <button class="bg-agro-700 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-agro-800 flex items-center gap-2 shadow-sm">
+            <i class="ph ph-plus-circle"></i> + Inserir Lote Manual
+          </button>
+        </div>
+      </div>
+
+      <!-- MÉTRICAS DE IMPACTO -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex justify-between">Volume Total Ofertado <i class="ph ph-scales text-lg text-emerald-600"></i></div>
+          <div class="text-3xl font-black text-slate-900 mt-2">14.850 <span class="text-base font-normal text-slate-500">kg</span></div>
+          <div class="text-xs text-emerald-600 font-bold mt-1 flex items-center gap-1">↑ +18% vs semana anterior</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex justify-between">Receita Agricultura Familiar <i class="ph ph-money text-lg text-emerald-600"></i></div>
+          <div class="text-3xl font-black text-emerald-700 mt-2">R$ 84.600</div>
+          <div class="text-xs text-slate-500 mt-1">100% garantido sem atravessador</div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex justify-between">Lotes Pré-Reservados <i class="ph ph-bookmark-simple text-lg text-emerald-600"></i></div>
+          <div class="text-3xl font-black text-slate-900 mt-2">82%</div>
+          <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+            <div class="bg-emerald-600 h-2 rounded-full" style="width: 82%"></div>
+          </div>
+        </div>
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div class="text-xs font-semibold text-slate-500 uppercase tracking-wide flex justify-between">Produtores Ativos <i class="ph ph-users-three text-lg text-emerald-600"></i></div>
+          <div class="text-3xl font-black text-slate-900 mt-2">38 <span class="text-base font-normal text-slate-500">cooperados</span></div>
+          <div class="text-xs text-emerald-600 font-bold mt-1">91% assiduidade de cadastro</div>
+        </div>
+      </div>
+
+      <!-- TABELA DE LOTES SINCRONIZADOS -->
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+        <div class="p-5 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+          <h3 class="font-bold text-slate-800 text-lg">Lotes Disponíveis para Escoamento Imediato</h3>
+          <span class="text-xs font-semibold bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full">Atualizado há 2 min</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-50 text-slate-500 uppercase text-xs font-bold border-b border-slate-200">
+              <tr>
+                <th class="px-6 py-3.5">Produtor / Sítio</th>
+                <th class="px-6 py-3.5">Cultura / Alimento</th>
+                <th class="px-6 py-3.5">Volume</th>
+                <th class="px-6 py-3.5">Preço Sugerido</th>
+                <th class="px-6 py-3.5">Previsão Colheita</th>
+                <th class="px-6 py-3.5">Status Logístico</th>
+                <th class="px-6 py-3.5 text-right">Ação</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              <tr class="hover:bg-slate-50/80">
+                <td class="px-6 py-4 font-semibold text-slate-800">
+                  Seu José da Silva
+                  <div class="text-xs text-slate-500 font-normal">Sítio Boa Esperança • Serra Alta</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="font-medium text-slate-800">Morango Camarosa</span>
+                  <span class="block text-xs text-emerald-700 font-bold">Orgânico Certificado</span>
+                </td>
+                <td class="px-6 py-4 font-bold text-slate-900">200 kg (40 cx)</td>
+                <td class="px-6 py-4 font-bold text-emerald-700">R$ 12,00 / kg</td>
+                <td class="px-6 py-4 text-slate-600">03/Nov (3 dias)</td>
+                <td class="px-6 py-4"><span class="bg-emerald-100 text-emerald-800 text-xs px-2.5 py-1 rounded-full font-bold">Disponível</span></td>
+                <td class="px-6 py-4 text-right">
+                  <button class="bg-agro-700 hover:bg-agro-800 text-white text-xs px-3 py-1.5 rounded-lg font-semibold">Alocar Carga</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="px-6 py-4 font-semibold text-slate-800">
+                  Dona Maria Aparecida
+                  <div class="text-xs text-slate-500 font-normal">Chácara Primavera • Várzea</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="font-medium text-slate-800">Tomate Italiano</span>
+                  <span class="block text-xs text-amber-700 font-bold">Transição Agroecológica</span>
+                </td>
+                <td class="px-6 py-4 font-bold text-slate-900">1.250 kg (62 cx)</td>
+                <td class="px-6 py-4 font-bold text-emerald-700">R$ 6,50 / kg</td>
+                <td class="px-6 py-4 text-slate-600">05/Nov (5 dias)</td>
+                <td class="px-6 py-4"><span class="bg-amber-100 text-amber-800 text-xs px-2.5 py-1 rounded-full font-bold">Pré-Reservado</span></td>
+                <td class="px-6 py-4 text-right">
+                  <button class="bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg font-semibold">Ver Reserva</button>
+                </td>
+              </tr>
+              <tr class="hover:bg-slate-50/80">
+                <td class="px-6 py-4 font-semibold text-slate-800">
+                  Antônio Neves
+                  <div class="text-xs text-slate-500 font-normal">Recanto dos Ipês • Setor Norte</div>
+                </td>
+                <td class="px-6 py-4">
+                  <span class="font-medium text-slate-800">Alface Americana</span>
+                  <span class="block text-xs text-emerald-700 font-bold">Orgânico</span>
+                </td>
+                <td class="px-6 py-4 font-bold text-slate-900">850 unidades</td>
+                <td class="px-6 py-4 font-bold text-emerald-700">R$ 3,20 / un</td>
+                <td class="px-6 py-4 text-slate-600">Amanhã (02/Nov)</td>
+                <td class="px-6 py-4"><span class="bg-blue-100 text-blue-800 text-xs px-2.5 py-1 rounded-full font-bold">Em Rota #04</span></td>
+                <td class="px-6 py-4 text-right">
+                  <button class="bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs px-3 py-1.5 rounded-lg font-semibold">Rastrear</button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 2: TRIAGEM AGRONÔMICA E PRAGAS -->
+    <section id="view-agronomia" class="hidden space-y-6">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full">Vigilância Fitossanitária</span>
+          <h2 class="text-2xl font-extrabold text-agro-900 mt-1">Mesa Agronômica & Triagem Territorial</h2>
+          <p class="text-sm text-slate-600">Validação técnica dos alertas emitidos por fotos e áudio dos agricultores.</p>
+        </div>
+        <div class="text-right">
+          <span class="text-sm font-bold text-rose-600 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">3 Focos Ativos no Raio de 15km</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- DETALHE DO CASO CRÍTICO -->
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4">
+          <div class="flex justify-between items-start border-b pb-4">
+            <div>
+              <span class="bg-rose-600 text-white text-xs font-bold px-2 py-0.5 rounded">URGENTE #1042</span>
+              <h3 class="text-lg font-bold text-slate-900 mt-1">Suspeita: Mosca-Branca / Queima Foliar em Tomateiro</h3>
+              <p class="text-xs text-slate-500">Sítio Boa Esperança (Seu José) • Talhão 3 • Coordenadas: -22.4812, -44.1205</p>
+            </div>
+            <span class="text-xs text-slate-400">Enviado há 18 min via App</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div class="bg-slate-100 rounded-xl overflow-hidden aspect-video relative flex items-center justify-center border">
+              <img src="folha.png" class="w-full h-full object-cover"/>
+
+              <span class="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded">Foto do Produtor</span>
+            </div>
+            <div class="space-y-3">
+              <div class="bg-emerald-50 border border-emerald-200 p-3 rounded-xl">
+                <div class="text-xs font-bold text-emerald-800 flex items-center gap-1">
+                  <i class="ph ph-microphone"></i> Transcrição do Áudio do Produtor:
+                </div>
+                <p class="text-xs text-slate-700 italic mt-1">"Tem bichinho branco debaixo das folhas novas e começou a amarelar tudo no talhão 3. Tá passando pro vizinho!"</p>
+              </div>
+              <div class="text-xs text-slate-600 space-y-1">
+                <p><strong>Diagnóstico Preliminar:</strong> <em>Bemisia tabaci</em> (Densidade moderada/alta).</p>
+                <p><strong>Protocolo Agroecológico:</strong> Pulverização de óleo de Neem (0,5%) + extrato de alho nas horas frescas.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-2 flex flex-wrap gap-2">
+            <button class="bg-rose-700 hover:bg-rose-800 text-white text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-2">
+              <i class="ph ph-broadcast"></i> Disparar Alerta Territorial (Raio 5km)
+            </button>
+            <button class="bg-emerald-700 hover:bg-emerald-800 text-white text-sm font-bold px-4 py-2 rounded-xl flex items-center gap-2">
+              <i class="ph ph-whatsapp-logo"></i> Devolutiva para WhatsApp do Seu José
+            </button>
+          </div>
+        </div>
+
+        <!-- LISTA LATERAL DE TRIAGEM -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <h4 class="font-bold text-slate-800 text-sm uppercase tracking-wide">Fila de Entrada</h4>
+          <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 cursor-pointer">
+            <div class="flex justify-between text-xs font-bold text-rose-700">
+              <span>#1042 Tomateiro</span>
+              <span>Crítico</span>
+            </div>
+            <div class="text-xs text-slate-700 font-medium mt-1">Seu José • Mosca-Branca</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 cursor-pointer">
+            <div class="flex justify-between text-xs font-bold text-slate-700">
+              <span>#1041 Milho Crioulo</span>
+              <span class="text-emerald-700">Confirmado</span>
+            </div>
+            <div class="text-xs text-slate-700 font-medium mt-1">Dona Lúcia • Lagarta-do-Cartucho</div>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 hover:bg-slate-100 cursor-pointer">
+            <div class="flex justify-between text-xs font-bold text-slate-700">
+              <span>#1040 Café Arábica</span>
+              <span class="text-amber-700">Preventivo</span>
+            </div>
+            <div class="text-xs text-slate-700 font-medium mt-1">Família Silva • Ferrugem</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 3: LOGÍSTICA & FRETE SOLIDÁRIO -->
+    <section id="view-logistica" class="hidden space-y-6">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Distribuição Colaborativa</span>
+        <h2 class="text-2xl font-extrabold text-agro-900 mt-1">Logística de Coleta & Frete Solidário</h2>
+        <p class="text-sm text-slate-600">Roteirização inteligente para otimizar caminhões cooperativos e eliminar intermediários.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <div class="text-xs text-slate-500 font-bold uppercase">Caminhão #04 Polo Serra</div>
+          <div class="text-2xl font-black text-slate-900 mt-1">88% Ocupação</div>
+          <p class="text-xs text-slate-600 mt-1">Restam 420 kg de capacidade frigorificada.</p>
+          <div class="mt-4 text-xs font-semibold text-emerald-700 bg-emerald-50 p-2.5 rounded-lg">
+            Economia gerada por rota: R$ 4.250 em fretes individuais evitados.
+          </div>
+        </div>
+
+        <div class="md:col-span-2 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+          <h3 class="font-bold text-slate-800 mb-3">Itinerário de Coleta na Porteira (Circuito Terça-Feira)</h3>
+          <ol class="relative border-l border-emerald-400 ml-3 space-y-4 text-sm">
+            <li class="mb-2 ml-6">
+              <span class="absolute flex items-center justify-center w-6 h-6 bg-emerald-600 rounded-full -left-3 text-white text-xs font-bold">1</span>
+              <h4 class="font-bold text-slate-900">07:30 — Sítio Boa Esperança (Seu José)</h4>
+              <p class="text-xs text-slate-600">Coleta de 200 kg Morango Orgânico • Conferência de balança Bluetooth aprovada.</p>
+            </li>
+            <li class="mb-2 ml-6">
+              <span class="absolute flex items-center justify-center w-6 h-6 bg-emerald-600 rounded-full -left-3 text-white text-xs font-bold">2</span>
+              <h4 class="font-bold text-slate-900">08:15 — Chácara Recanto Verde (Dona Maria)</h4>
+              <p class="text-xs text-slate-600">Coleta de 150 kg Tomate Italiano • Embalamento em caixas retornáveis.</p>
+            </li>
+            <li class="ml-6">
+              <span class="absolute flex items-center justify-center w-6 h-6 bg-slate-300 rounded-full -left-3 text-slate-700 text-xs font-bold">3</span>
+              <h4 class="font-bold text-slate-900">10:45 — Galpão Central Terra Viva (Cross-docking)</h4>
+              <p class="text-xs text-slate-600">Descarregamento e separação para 14 restaurantes urbanos.</p>
+            </li>
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 4: COMPRADORES E MERCADO URBANO -->
+    <section id="view-compradores" class="hidden space-y-6">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">Mercado B2B Sustentável</span>
+        <h2 class="text-2xl font-extrabold text-agro-900 mt-1">Conexão Urbana & Selo de Origem</h2>
+        <p class="text-sm text-slate-600">Restaurantes e mercados comprando direto da cooperativa com procedência e rastreabilidade total.</p>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Lote #TOM-402</span>
+            <span class="text-xs text-slate-400">Entrega Amanhã</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900">Tomate Italiano de Polpa Firme</h3>
+          <p class="text-xs text-slate-500">Produtor: Seu José da Silva (Sítio Boa Esperança)</p>
+          <div class="text-2xl font-extrabold text-agro-900">R$ 6,80 <span class="text-xs font-normal text-slate-500">/ kg</span></div>
+          <div class="pt-2 border-t flex justify-between items-center text-xs">
+            <span class="text-slate-500">Split Pix Direto: <strong>88% produtor</strong></span>
+            <button class="bg-agro-700 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-agro-800">Reservar Lote</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Lote #MOR-109</span>
+            <span class="text-xs text-slate-400">Pronta-Entrega</span>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900">Morango Agroflorestal Pingo de Mel</h3>
+          <p class="text-xs text-slate-500">Produtora: Dona Clara (Chácara Bela Vista)</p>
+          <div class="text-2xl font-extrabold text-agro-900">R$ 14,50 <span class="text-xs font-normal text-slate-500">/ bdj 500g</span></div>
+          <div class="pt-2 border-t flex justify-between items-center text-xs">
+            <span class="text-slate-500">Selo QR Cardápio incluso</span>
+            <button class="bg-agro-700 text-white px-3 py-1.5 rounded-lg font-bold hover:bg-agro-800">Reservar Lote</button>
+          </div>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm space-y-3">
+          <div class="flex justify-between items-start">
+            <span class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded">Selo QR Code Ativo</span>
+            <i class="ph ph-qr-code text-2xl text-slate-700"></i>
+          </div>
+          <h3 class="font-bold text-lg text-slate-900">Rastreabilidade no Prato</h3>
+          <p class="text-xs text-slate-600">Restaurantes colocam o QR Code na mesa para os clientes conhecerem a história da família produtora e laudo de agrotóxico zero.</p>
+          <button class="w-full bg-slate-100 text-slate-700 font-bold text-xs py-2 rounded-xl hover:bg-slate-200">Gerar Display de Mesa (PDF)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- SEÇÃO 5: SIMULADOR INTERATIVO MOBILE (APP DO PRODUTOR RURAL) -->
+    <section id="view-mobile-sim" class="hidden">
+      <div class="max-w-md mx-auto bg-emerald-950 text-white p-6 rounded-[2.5rem] shadow-2xl border-4 border-slate-800">
+        <!-- HEADER DO SMARTPHONE DO PRODUTOR -->
+        <div class="flex justify-between items-center pb-4 border-b border-emerald-800 text-xs">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="font-bold text-emerald-300">Modo Roça Ativo (Offline)</span>
+          </div>
+          <span class="bg-emerald-800 px-2 py-0.5 rounded text-[10px]">Alto Contraste</span>
+        </div>
+
+        <div class="py-4">
+          <div class="text-xs text-emerald-200">Sítio Boa Esperança</div>
+          <h3 class="text-xl font-black">Olá, Seu José!</h3>
+          <p class="text-xs text-emerald-300 mt-0.5">Tempo favorável para colheita hoje (27°C).</p>
+        </div>
+
+        <!-- SIMULADOR: OFERTAR SAFRA RÁPIDA -->
+        <div class="bg-emerald-900/90 p-4 rounded-2xl border border-emerald-700 space-y-3 my-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase text-emerald-300">1. Ofertar Safra</span>
+            <span class="text-[10px] bg-emerald-700 px-1.5 py-0.5 rounded">Sem atravessador</span>
+          </div>
+          <div class="text-sm font-bold">O que vai colher hoje?</div>
+          <div class="grid grid-cols-2 gap-2 text-xs">
+            <button class="bg-emerald-700 hover:bg-emerald-600 p-2 rounded-xl text-center font-bold">🍓 Morango</button>
+            <button class="bg-emerald-800 hover:bg-emerald-700 p-2 rounded-xl text-center font-medium">🍅 Tomate</button>
+            <button class="bg-emerald-800 hover:bg-emerald-700 p-2 rounded-xl text-center font-medium">🥬 Alface</button>
+            <button class="bg-emerald-800 hover:bg-emerald-700 p-2 rounded-xl text-center font-medium">🥕 Cenoura</button>
+          </div>
+          <div class="bg-emerald-950 p-2.5 rounded-xl flex justify-between items-center text-xs">
+            <span>Estimativa: <strong>200 kg</strong></span>
+            <span class="text-emerald-300 font-bold">R$ 2.400 no Pix</span>
+          </div>
+          <button onclick="alert('Lote salvo na memória local do smartphone! Sincronizará assim que detectar rede.')" class="w-full bg-emerald-400 hover:bg-emerald-300 text-emerald-950 font-black py-2 rounded-xl text-xs uppercase tracking-wide">
+            Publicar Oferta na Cooperativa
+          </button>
+        </div>
+
+        <!-- SIMULADOR: REPORTAR PRAGA POR VOZ/FOTO -->
+        <div class="bg-emerald-900/90 p-4 rounded-2xl border border-emerald-700 space-y-3">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold uppercase text-rose-300">2. Reportar Praga</span>
+            <span class="text-[10px] bg-rose-900/80 text-rose-200 px-1.5 py-0.5 rounded">Falar ou Fotografar</span>
+          </div>
+          <div class="flex gap-2">
+            <button onclick="alert('Gravando áudio... Fale o que viu na folha!')" class="flex-1 bg-rose-700 hover:bg-rose-600 p-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+              <i class="ph ph-microphone text-base"></i> Gravar Áudio
+            </button>
+            <button onclick="alert('Câmera aberta. Fotografe a folha ou inseto.')" class="flex-1 bg-emerald-800 hover:bg-emerald-700 p-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5">
+              <i class="ph ph-camera text-base"></i> Tirar Foto
+            </button>
+          </div>
+          <p class="text-[11px] text-emerald-300 text-center">Salva sem internet e transmite via satélite/torre rural.</p>
+        </div>
+
+        <!-- BARRA INFERIOR MOBILE -->
+        <div class="mt-6 pt-3 border-t border-emerald-800/80 flex justify-around text-center text-[10px] text-emerald-300">
+          <div><i class="ph-bold ph-house text-lg block"></i> Início</div>
+          <div><i class="ph-bold ph-bug text-lg block"></i> Pragas</div>
+          <div><i class="ph-bold ph-plant text-lg block"></i> Safra</div>
+          <div><i class="ph-bold ph-arrows-clockwise text-lg block"></i> Sincronizar</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RODAPÉ GLOBAL -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <p><strong>AgroConecta CitizenTech</strong> — Desenvolvido para a Global Solution FIAP 2026.</p>
+    <p class="mt-1">Tecnologia acessível para agricultura familiar, segurança alimentar e comércio justo.</p>
+  </footer>
+
+  <!-- SCRIPT DE NAVEGAÇÃO ENTRE ABAS -->
+  <script>
+    function switchTab(viewId) {
+      const views = ['estoque', 'agronomia', 'logistica', 'compradores', 'mobile-sim'];
+      views.forEach(v => {
+        document.getElementById('view-' + v).classList.add('hidden');
+        document.getElementById('tab-' + v).classList.remove('active');
+      });
+      document.getElementById('view-' + viewId).classList.remove('hidden');
+      document.getElementById('tab-' + viewId).classList.add('active');
+    }
+  </script>
+</body>
+</html>
